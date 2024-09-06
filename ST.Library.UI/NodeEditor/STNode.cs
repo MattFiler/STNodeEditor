@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
 using CATHODE.Scripting;
+using CATHODE.Scripting.Internal;
 /*
 MIT License
 
@@ -794,6 +795,20 @@ namespace ST.Library.UI.NodeEditor
         /// <param name="dt">Drawing tools</param>
         /// <param name="op">Specified options</param>
         protected virtual void OnDrawOptionText(DrawingTools dt, STNodeOption op) {
+
+            //Don't render pin names on cathode variable entity nodes
+            var node = this as CathodeNode;
+            if (node != null)
+            {
+                Entity ent = ((CathodeNode)this).Entity;
+                if (ent.variant == EntityVariant.VARIABLE)
+                {
+                    VariableEntity varEnt = (VariableEntity)ent;
+                    if (op.ShortGUID == varEnt.name)
+                        return;
+                }
+            }
+
             Graphics g = dt.Graphics;
             SolidBrush brush = dt.SolidBrush;
             if (op.IsInput) {
