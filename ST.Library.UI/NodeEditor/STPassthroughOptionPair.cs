@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CATHODE.Scripting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,24 +15,24 @@ namespace ST.Library.UI.NodeEditor
     {
         private STNode mTargetNode;
         private bool m_bSingle;
-        private string m_strIn;
-        private string m_strOut;
+        private ShortGuid m_shortGuidIn;
+        private ShortGuid m_shortGuidOut;
 
         private STPassthroughOption mValueInOption;
         private STPassthroughOption mValueOutOption;
 
-        public STPassthroughOptionPair(STNode targetNode, bool bSingle, string strTextIn, string strTextOut)
+        public STPassthroughOptionPair(STNode targetNode, bool bSingle, ShortGuid shortGuidIn, ShortGuid shortGuidOut)
         {
             mTargetNode = targetNode;
             m_bSingle = bSingle;
-            m_strIn = strTextIn;
-            m_strOut = strTextOut;
+            m_shortGuidIn = shortGuidIn;
+            m_shortGuidOut = shortGuidOut;
         }
 
         public void CreateOptionPair()
         {
-            mValueInOption = new STPassthroughOption(m_strIn, typeof(object), m_bSingle);
-            mValueOutOption = new STPassthroughOption(m_strOut, typeof(object), false);
+            mValueInOption = new STPassthroughOption(m_shortGuidIn, typeof(object), m_bSingle);
+            mValueOutOption = new STPassthroughOption(m_shortGuidOut, typeof(object), false);
             mTargetNode.InputOptions.Add(mValueInOption);
             mTargetNode.OutputOptions.Add(mValueOutOption);
             mValueInOption.Connected += new STNodeOptionEventHandler(input_Connected);
@@ -153,7 +154,7 @@ namespace ST.Library.UI.NodeEditor
 
         public class STPassthroughOption : STNodeOption
         {
-            public STPassthroughOption(string strText, Type dataType, bool bSingle) : base(strText, dataType, bSingle) { }
+            public STPassthroughOption(ShortGuid shortGuid, Type dataType, bool bSingle) : base(shortGuid, dataType, bSingle) { }
 
             public override ConnectionStatus ConnectOption(STNodeOption op)
             {

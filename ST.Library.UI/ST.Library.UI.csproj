@@ -81,6 +81,12 @@
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CathodeLib\CathodeLib\CathodeLib.csproj">
+      <Project>{31B51706-A73F-4E89-83F1-408BD8BD4B38}</Project>
+      <Name>CathodeLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

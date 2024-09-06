@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using System.Drawing;
+using CATHODE.Scripting;
 
 namespace ST.Library.UI.NodeEditor
 {
@@ -71,16 +72,28 @@ namespace ST.Library.UI.NodeEditor
 
         private string _Text;
         /// <summary>
-        /// Get or set the current Option display text.
-        /// When AutoSize is set, this property cannot be modified.
+        /// Get the current Option display text.
         /// </summary>
         public string Text {
             get { return _Text; }
+            /*
             internal set {
                 if (value == _Text) return;
                 _Text = value;
                 if (this._Owner == null) return;
                 this._Owner.BuildSize(true, true, true);
+            }
+            */
+        }
+
+        private ShortGuid _shortGUID;
+        public ShortGuid ShortGUID
+        {
+            get { return _shortGUID; }
+            set
+            {
+                _shortGUID = value;
+                _Text = _shortGUID.ToString();
             }
         }
 
@@ -211,15 +224,16 @@ namespace ST.Library.UI.NodeEditor
         /// <summary>
         /// Construct an Option.
         /// </summary>
-        /// <param name="strText">Display text</param>
+        /// <param name="shortGuid">Alien GUID</param>
         /// <param name="dataType">Type of data</param>
         /// <param name="bSingle">Whether it is a single connection</param>
-        public STNodeOption(string strText, Type dataType, bool bSingle) {
+        public STNodeOption(ShortGuid shortGuid, Type dataType, bool bSingle) {
             if (dataType == null) throw new ArgumentNullException("The specified data type cannot be empty.");
             this._DotSize = 10;
             m_hs_connected = new HashSet<STNodeOption>();
             this._DataType = dataType;
-            this._Text = strText;
+            this._Text = shortGuid.ToString();
+            this._shortGUID = shortGuid;
             this._IsSingle = bSingle;
             this._HitAreaExpandSize = 3;
         }
@@ -327,6 +341,11 @@ namespace ST.Library.UI.NodeEditor
         /// <param name="op">Option to be connected</param>
         /// <returns>Connection result</returns>
         public virtual ConnectionStatus ConnectOption(STNodeOption op) {
+
+            //This is a new thing - we can instance multiple nodes for the same entity, therefore we shouldn't allow the "same" connection to be represented by multiple nodes
+            STNodeOption duplicateConnection = null;
+
+
             if (!this.ConnectingOption(op)) {
                 this.STNodeEditorConnected(new STNodeEditorOptionEventArgs(op, this, ConnectionStatus.Reject));
                 return ConnectionStatus.Reject;

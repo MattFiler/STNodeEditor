@@ -6,6 +6,7 @@ using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
+using CATHODE.Scripting;
 /*
 MIT License
 
@@ -926,9 +927,9 @@ namespace ST.Library.UI.NodeEditor
         /// <param name="op">Target Option</param>
         /// <param name="strText">Text</param>
         /// <returns>whether succeed</returns>
-        protected bool SetOptionText(STNodeOption op, string strText) {
+        protected bool SetOptionText(STNodeOption op, ShortGuid shortGUID) {
             if (op.Owner != this) return false;
-            op.Text = strText;
+            op.ShortGUID = shortGUID;
             return true;
         }
         /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using CATHODE.Scripting;
 /*
 MIT License
 
@@ -39,15 +40,15 @@ namespace ST.Library.UI.NodeEditor
     public class STNodeHub : STNode
     {
         private bool m_bSingle;
-        private string m_strIn;
-        private string m_strOut;
+        private ShortGuid m_shortGuidIn;
+        private ShortGuid m_shortGuidOut;
 
-        public STNodeHub() : this(false, "IN", "OUT") { }
-        public STNodeHub(bool bSingle) : this(bSingle, "IN", "OUT") { }
-        public STNodeHub(bool bSingle, string strTextIn, string strTextOut) {
+        public STNodeHub() : this(false, ShortGuid.Invalid, ShortGuid.Invalid) { }
+        public STNodeHub(bool bSingle) : this(bSingle, ShortGuid.Invalid, ShortGuid.Invalid) { }
+        public STNodeHub(bool bSingle, ShortGuid shortGuidIn, ShortGuid shortGuidOut) {
             m_bSingle = bSingle;
-            m_strIn = strTextIn;
-            m_strOut = strTextOut;
+            m_shortGuidIn = shortGuidIn;
+            m_shortGuidOut = shortGuidOut;
             this.Addhub();
             this.Title = "HUB";
             this.AutoSize = false;
@@ -63,8 +64,8 @@ namespace ST.Library.UI.NodeEditor
         }
 
         private void Addhub() {
-            var input = new STNodeHubOption(m_strIn, typeof(object), m_bSingle);
-            var output = new STNodeHubOption(m_strOut, typeof(object), false);
+            var input = new STNodeHubOption(m_shortGuidIn, typeof(object), m_bSingle);
+            var output = new STNodeHubOption(m_shortGuidOut, typeof(object), false);
             this.InputOptions.Add(input);
             this.OutputOptions.Add(output);
             input.Connected += new STNodeOptionEventHandler(input_Connected);
@@ -156,7 +157,7 @@ namespace ST.Library.UI.NodeEditor
 
         public class STNodeHubOption : STNodeOption
         {
-            public STNodeHubOption(string strText, Type dataType, bool bSingle) : base(strText, dataType, bSingle) { }
+            public STNodeHubOption(ShortGuid shortGuid, Type dataType, bool bSingle) : base(shortGuid, dataType, bSingle) { }
 
             public override ConnectionStatus ConnectOption(STNodeOption op) {
                 var t = typeof(object);

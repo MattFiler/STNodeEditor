@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using System.Collections;
+using CATHODE.Scripting;
 
 namespace ST.Library.UI.NodeEditor
 {
@@ -30,7 +31,7 @@ namespace ST.Library.UI.NodeEditor
             m_options = new STNodeOption[4];
         }
 
-        public STNodeOption Add(string strText, Type dataType, bool bSingle) {
+        public STNodeOption Add(ShortGuid strText, Type dataType, bool bSingle) {
             //not do this code -> out of bounds
             //return m_options[this.Add(new STNodeOption(strText, dataType, bSingle))];
             int nIndex = this.Add(new STNodeOption(strText, dataType, bSingle));
