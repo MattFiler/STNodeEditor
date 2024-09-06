@@ -149,6 +149,21 @@ namespace ST.Library.UI.NodeEditor
             }
         }
 
+        private string _SubTitle;
+        /// <summary>
+        /// Get or set the Node subtitle.
+        /// </summary>
+        public string SubTitle
+        {
+            get { return _SubTitle; }
+            protected set
+            {
+                _SubTitle = value;
+                if (this._AutoSize) this.BuildSize(true, true, true);
+                //this.Invalidate(this.TitleRectangle);
+            }
+        }
+
         private string _Mark;
         /// <summary>
         /// Get or set Node tag information.
@@ -386,6 +401,7 @@ namespace ST.Library.UI.NodeEditor
         }
 
         private Font _Font;
+        private Font _FontBold;
         /// <summary>
         /// Get or set the Node font.
         /// </summary>
@@ -395,6 +411,7 @@ namespace ST.Library.UI.NodeEditor
                 if (value == _Font) return;
                 this._Font.Dispose();
                 _Font = value;
+                _FontBold = new Font(this._Font, FontStyle.Bold);
             }
         }
 
@@ -461,6 +478,7 @@ namespace ST.Library.UI.NodeEditor
 
         public STNode() {
             this._Title = "Untitled";
+            this._SubTitle = "";
             this._MarkRectangle.Height = this._Height;
             this._Left = this._MarkRectangle.X = m_static_pt_init.X;
             this._Top = m_static_pt_init.Y;
@@ -649,7 +667,23 @@ namespace ST.Library.UI.NodeEditor
             if (!string.IsNullOrEmpty(this._Title) && this._ForeColor.A != 0) {
                 brush.Color = this._ForeColor;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                g.DrawString(this._Title, this._Font, brush, this.TitleRectangle, m_sf);
+
+                string title = this._Title;
+                if (!string.IsNullOrEmpty(this._SubTitle))
+                    title += "\n ";
+
+                g.DrawString(title, this._FontBold, brush, this.TitleRectangle, m_sf);
+            }
+            if (!string.IsNullOrEmpty(this._SubTitle) && this._ForeColor.A != 0)
+            {
+                brush.Color = this._ForeColor;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+                string subTitle = this._SubTitle;
+                if (!string.IsNullOrEmpty(this._Title))
+                    subTitle = " \n" + subTitle;
+
+                g.DrawString(subTitle, this._Font, brush, this.TitleRectangle, m_sf);
             }
         }
         /// <summary>
@@ -815,6 +849,12 @@ namespace ST.Library.UI.NodeEditor
             }
             int nWidth = (int)(szf_input.Width + szf_output.Width + 25);
             if (!string.IsNullOrEmpty(this.Title)) szf_input = g.MeasureString(this.Title, this.Font);
+            if (!string.IsNullOrEmpty(this._SubTitle))
+            {
+                SizeF subtitle = g.MeasureString(this._SubTitle, this._FontBold);
+                if (szf_input.Width < subtitle.Width)
+                    szf_input.Width = subtitle.Width;
+            }
             if (szf_input.Width + 30 > nWidth) nWidth = (int)szf_input.Width + 30;
             return new Size(nWidth, nHeight);
         }
