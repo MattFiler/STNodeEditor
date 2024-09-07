@@ -9,9 +9,6 @@ namespace ST.Library.UI.NodeEditor
 	//[STNode("/")]
 	public class CathodeNode : STNode
 	{
-        public Entity Entity;
-        public ShortGuid ShortGUID => Entity.shortGUID;
-
         protected override void OnCreate()
 		{
             LetGetOptions = true;

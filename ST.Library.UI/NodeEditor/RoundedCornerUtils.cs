@@ -41,7 +41,7 @@ namespace ST.Library.UI.NodeEditor
             return path;
         }
 
-        public static GraphicsPath RoundedRectTop(Rectangle bounds, int radius)
+        public static GraphicsPath RoundedRectTop(Rectangle bounds, int radius, bool roundedOnAllSides = false)
         {
             int diameter = radius * 2;
             Size size = new Size(diameter, diameter);
@@ -61,8 +61,21 @@ namespace ST.Library.UI.NodeEditor
             arc.X = bounds.Right - diameter;
             path.AddArc(arc, 270, 90);
 
-            // bottom border
-            path.AddLine(new PointF(bounds.Right, bounds.Bottom), new PointF(bounds.Left, bounds.Bottom));
+            if (roundedOnAllSides)
+            {
+                // bottom right arc
+                arc.Y = bounds.Bottom - diameter;
+                path.AddArc(arc, 0, 90);
+
+                // bottom left arc
+                arc.X = bounds.Left;
+                path.AddArc(arc, 90, 90);
+            }
+            else
+            {
+                // bottom border
+                path.AddLine(new PointF(bounds.Right, bounds.Bottom), new PointF(bounds.Left, bounds.Bottom));
+            }
 
             path.CloseFigure();
             return path;
@@ -130,14 +143,14 @@ namespace ST.Library.UI.NodeEditor
             }
         }
 
-        public static void DrawRoundedRectangleTop(Graphics graphics, Pen pen, Rectangle bounds, int cornerRadius)
+        public static void DrawRoundedRectangleTop(Graphics graphics, Pen pen, Rectangle bounds, int cornerRadius, bool roundedOnAllSides = false)
         {
             if (graphics == null)
                 throw new ArgumentNullException("graphics");
             if (pen == null)
                 throw new ArgumentNullException("pen");
 
-            using (GraphicsPath path = RoundedRectTop(bounds, cornerRadius))
+            using (GraphicsPath path = RoundedRectTop(bounds, cornerRadius, roundedOnAllSides))
             {
                 var oldSmoothingMode = graphics.SmoothingMode;
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -146,14 +159,14 @@ namespace ST.Library.UI.NodeEditor
             }
         }
 
-        public static void FillRoundedRectangleTop(Graphics graphics, Brush brush, Rectangle bounds, int cornerRadius)
+        public static void FillRoundedRectangleTop(Graphics graphics, Brush brush, Rectangle bounds, int cornerRadius, bool roundedOnAllSides = false)
         {
             if (graphics == null)
                 throw new ArgumentNullException("graphics");
             if (brush == null)
                 throw new ArgumentNullException("brush");
 
-            using (GraphicsPath path = RoundedRectTop(bounds, cornerRadius))
+            using (GraphicsPath path = RoundedRectTop(bounds, cornerRadius, roundedOnAllSides))
             {
                 var oldSmoothingMode = graphics.SmoothingMode;
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;

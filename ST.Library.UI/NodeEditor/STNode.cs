@@ -467,6 +467,26 @@ namespace ST.Library.UI.NodeEditor
             get { return _Guid; }
         }
 
+
+        //hijacked cathode stuff
+
+        private Entity _entity = null;
+        public Entity Entity
+        {
+            get { return _entity; }
+            set
+            {
+                _entity = value;
+                _shouldRenderOptions = _entity.variant != EntityVariant.VARIABLE;
+            }
+        }
+        public ShortGuid ShortGUID => Entity.shortGUID;
+
+        private bool _shouldRenderOptions = true;
+        public bool RenderingOptions => _shouldRenderOptions;
+
+
+
         private bool _LetGetOptions = false;
         /// <summary>
         /// Get or set whether to allow external access to STNodeOption.
@@ -637,7 +657,7 @@ namespace ST.Library.UI.NodeEditor
                 }
                 else
                 {
-                    RoundedCornerUtils.FillRoundedRectangleTop(g, brush, this.TitleRectangle, Owner.RoundedCornerRadius);
+                    RoundedCornerUtils.FillRoundedRectangleTop(g, brush, this.TitleRectangle, Owner.RoundedCornerRadius, !RenderingOptions);
                 }
             }
             if (this._LockOption) {
@@ -796,18 +816,8 @@ namespace ST.Library.UI.NodeEditor
         /// <param name="op">Specified options</param>
         protected virtual void OnDrawOptionText(DrawingTools dt, STNodeOption op) {
 
-            //Don't render pin names on cathode variable entity nodes
-            var node = this as CathodeNode;
-            if (node != null)
-            {
-                Entity ent = ((CathodeNode)this).Entity;
-                if (ent.variant == EntityVariant.VARIABLE)
-                {
-                    VariableEntity varEnt = (VariableEntity)ent;
-                    if (op.ShortGUID == varEnt.name)
-                        return;
-                }
-            }
+            if (!RenderingOptions)
+                return;
 
             Graphics g = dt.Graphics;
             SolidBrush brush = dt.SolidBrush;
@@ -848,21 +858,25 @@ namespace ST.Library.UI.NodeEditor
         /// <returns>Calculated size</returns>
         protected virtual Size GetDefaultNodeSize(Graphics g) {
             int nInputHeight = 0, nOutputHeight = 0;
-            foreach (STNodeOption op in this._InputOptions) nInputHeight += this._ItemHeight;
-            foreach (STNodeOption op in this._OutputOptions) nOutputHeight += this._ItemHeight;
-            int nHeight = this._TitleHeight + (nInputHeight > nOutputHeight ? nInputHeight : nOutputHeight);
-
             SizeF szf_input = SizeF.Empty, szf_output = SizeF.Empty;
-            foreach (STNodeOption v in this._InputOptions) {
-                if (string.IsNullOrEmpty(v.Text)) continue;
-                SizeF szf = g.MeasureString(v.Text, this._Font);
-                if (szf.Width > szf_input.Width) szf_input = szf;
+            if (RenderingOptions)
+            {
+                foreach (STNodeOption op in this._InputOptions) nInputHeight += this._ItemHeight;
+                foreach (STNodeOption op in this._OutputOptions) nOutputHeight += this._ItemHeight;
+                foreach (STNodeOption v in this._InputOptions)
+                {
+                    if (string.IsNullOrEmpty(v.Text)) continue;
+                    SizeF szf = g.MeasureString(v.Text, this._Font);
+                    if (szf.Width > szf_input.Width) szf_input = szf;
+                }
+                foreach (STNodeOption v in this._OutputOptions)
+                {
+                    if (string.IsNullOrEmpty(v.Text)) continue;
+                    SizeF szf = g.MeasureString(v.Text, this._Font);
+                    if (szf.Width > szf_output.Width) szf_output = szf;
+                }
             }
-            foreach (STNodeOption v in this._OutputOptions) {
-                if (string.IsNullOrEmpty(v.Text)) continue;
-                SizeF szf = g.MeasureString(v.Text, this._Font);
-                if (szf.Width > szf_output.Width) szf_output = szf;
-            }
+            int nHeight = this._TitleHeight + (nInputHeight > nOutputHeight ? nInputHeight : nOutputHeight);
             int nWidth = (int)(szf_input.Width + szf_output.Width + 25);
             if (!string.IsNullOrEmpty(this.Title)) szf_input = g.MeasureString(this.Title, this.Font);
             if (!string.IsNullOrEmpty(this._SubTitle))
@@ -1112,7 +1126,8 @@ namespace ST.Library.UI.NodeEditor
         /// </summary>
         protected virtual void SetOptionsLocation() {
             int nIndex = 0;
-            Rectangle rect = new Rectangle(this.Left + 10, this._Top + this._TitleHeight, this._Width - 20, this._ItemHeight);
+            int topStartOffset = RenderingOptions ? this._Top + this._TitleHeight : this._Top;
+            Rectangle rect = new Rectangle(this.Left + 10, topStartOffset, this._Width - 20, this._ItemHeight);
             foreach (STNodeOption op in this._InputOptions) {
                 if (op != STNodeOption.Empty) {
                     Point pt = this.OnSetOptionDotLocation(op, new Point(this.Left - op.DotSize / 2, rect.Y + (rect.Height - op.DotSize) / 2), nIndex);
@@ -1123,7 +1138,7 @@ namespace ST.Library.UI.NodeEditor
                 rect.Y += this._ItemHeight;
                 nIndex++;
             }
-            rect.Y = this._Top + this._TitleHeight;
+            rect.Y = topStartOffset;
             m_sf.Alignment = StringAlignment.Far;
             foreach (STNodeOption op in this._OutputOptions) {
                 if (op != STNodeOption.Empty) {
