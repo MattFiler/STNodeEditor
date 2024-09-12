@@ -377,7 +377,7 @@ namespace ST.Library.UI.NodeEditor
             if (this == STNodeOption.Empty || op == STNodeOption.Empty) return ConnectionStatus.EmptyOption;
             if (this._IsInput == op.IsInput) return ConnectionStatus.SameInputOrOutput;
             if (op.Owner == null || this._Owner == null) return ConnectionStatus.NoOwner;
-            if (op.Owner == this._Owner) return ConnectionStatus.SameOwner;
+            if (!this.Owner.Owner.AllowSameOwnerConnections && op.Owner == this._Owner) return ConnectionStatus.SameOwner;
             if (this._Owner.LockOption || op._Owner.LockOption) return ConnectionStatus.Locked;
             if (this._IsSingle && m_hs_connected.Count == 1) return ConnectionStatus.SingleOption;
             if (!this.Owner.Owner.AllowNodeGraphLoops)

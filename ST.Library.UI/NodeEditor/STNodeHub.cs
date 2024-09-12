@@ -173,7 +173,7 @@ namespace ST.Library.UI.NodeEditor
                 if (this.DataType != typeof(object)) return base.CanConnect(op);
                 if (this.IsInput == op.IsInput) return ConnectionStatus.SameInputOrOutput;
                 if (op.Owner == null || this.Owner == null) return ConnectionStatus.NoOwner;
-                if (op.Owner == this.Owner) return ConnectionStatus.SameOwner;
+                if (!this.Owner.Owner.AllowSameOwnerConnections && op.Owner == this.Owner) return ConnectionStatus.SameOwner;
                 if (this.Owner.LockOption || op.Owner.LockOption) return ConnectionStatus.Locked;
                 if (this.IsSingle && m_hs_connected.Count == 1) return ConnectionStatus.SingleOption;
                 if (!this.Owner.Owner.AllowNodeGraphLoops)

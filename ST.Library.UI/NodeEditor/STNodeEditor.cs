@@ -422,6 +422,13 @@ namespace ST.Library.UI.NodeEditor
             set { mAllowNodeGraphLoops = value; }
         }
 
+        private bool mAllowSameOwnerConnections = false;
+        public bool AllowSameOwnerConnections
+        {
+            get { return mAllowSameOwnerConnections; }
+            set { mAllowSameOwnerConnections = value; }
+        }
+
         #endregion
 
         #region protected properties ----------------------------------------------------------------------------------------
