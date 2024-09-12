@@ -374,6 +374,17 @@ namespace ST.Library.UI.NodeEditor
         /// <param name="op">Option to be connected</param>
         /// <returns>Test results</returns>
         public virtual ConnectionStatus CanConnect(STNodeOption op) {
+            ConnectionStatus status = CanConnectInternal(op);
+#if DEBUG
+            if (status != ConnectionStatus.Connected)
+            {
+                Console.WriteLine("Failed to connect option: " + status);
+            }
+#endif
+            return status;
+        }
+        private ConnectionStatus CanConnectInternal(STNodeOption op)
+        {
             if (this == STNodeOption.Empty || op == STNodeOption.Empty) return ConnectionStatus.EmptyOption;
             if (this._IsInput == op.IsInput) return ConnectionStatus.SameInputOrOutput;
             if (op.Owner == null || this._Owner == null) return ConnectionStatus.NoOwner;
