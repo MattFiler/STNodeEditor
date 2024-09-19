@@ -5,6 +5,7 @@ using System.Text;
 
 using System.Drawing;
 using CATHODE.Scripting;
+using System.Windows.Forms;
 
 namespace ST.Library.UI.NodeEditor
 {
@@ -378,6 +379,7 @@ namespace ST.Library.UI.NodeEditor
 #if DEBUG
             if (status != ConnectionStatus.Connected)
             {
+                MessageBox.Show("FAILED to connect option! Please breakpoint STNodeOption.");
                 Console.WriteLine("Failed to connect option: " + status);
             }
 #endif
