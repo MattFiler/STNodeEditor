@@ -41,7 +41,7 @@ SOFTWARE.
  */
 namespace ST.Library.UI.NodeEditor
 {
-    public abstract class STNode
+    public class STNode
     {
         private STNodeEditor _Owner;
         /// <summary>
@@ -467,9 +467,6 @@ namespace ST.Library.UI.NodeEditor
             get { return _Guid; }
         }
 
-
-        //hijacked cathode stuff
-
         private Entity _entity = null;
         public Entity Entity
         {
@@ -485,8 +482,6 @@ namespace ST.Library.UI.NodeEditor
         private bool _shouldRenderOptions = true;
         public bool RenderingOptions => _shouldRenderOptions;
 
-
-
         private bool _LetGetOptions = false;
         /// <summary>
         /// Get or set whether to allow external access to STNodeOption.
@@ -497,6 +492,8 @@ namespace ST.Library.UI.NodeEditor
         }
 
         private static Point m_static_pt_init = new Point(10, 10);
+
+        public int NodeID; //This is used at reconstruction time to ensure connections point to the correct nodes. Ignore it elsewhere.
 
         public STNode() {
             this._Title = "Untitled";
@@ -522,6 +519,65 @@ namespace ST.Library.UI.NodeEditor
             m_static_pt_init.Y += 10;
             this._Guid = Guid.NewGuid();
             this.OnCreate();
+        }
+
+        public void Recompute()
+        {
+            this.SetOptionsLocation();
+            this.BuildSize(false, true, false);
+            this.OnResize(EventArgs.Empty);
+            this.Invalidate();
+        }
+
+        public void SetName(string name, string subtitle = "")
+        {
+            int height = 20;
+            if (subtitle != "")
+                height = 35;
+
+            Title = name;
+            SubTitle = subtitle;
+            TitleHeight = height;
+        }
+
+        public void SetColour(Color colourBG, Color colourFG)
+        {
+            TitleColor = colourBG;
+            ForeColor = colourFG;
+        }
+
+        public void SetPosition(Point location)
+        {
+            Location = location;
+        }
+
+        public void AddOptions(ShortGuid[] inputOptions, ShortGuid[] outputOptions)
+        {
+            if (inputOptions != null)
+                for (int i = 0; i < inputOptions.Length; i++)
+                    AddInputOption(inputOptions[i]);
+            if (outputOptions != null)
+                for (int i = 0; i < outputOptions.Length; i++)
+                    AddOutputOption(outputOptions[i]);
+        }
+
+        public STNodeOption AddInputOption(ShortGuid option, bool unique = false)
+        {
+            if (!unique)
+                for (int i = 0; i < this.InputOptions.Count; i++)
+                    if (this.InputOptions[i].Text == option.ToString())
+                        return this.InputOptions[i];
+
+            return this.InputOptions.Add(option, typeof(void), false);
+        }
+        public STNodeOption AddOutputOption(ShortGuid option, bool unique = false)
+        {
+            if (!unique)
+                for (int i = 0; i < this.OutputOptions.Count; i++)
+                    if (this.OutputOptions[i].Text == option.ToString())
+                        return this.OutputOptions[i];
+
+            return this.OutputOptions.Add(option, typeof(void), false);
         }
 
         //private int m_nItemHeight = 30;
@@ -617,7 +673,11 @@ namespace ST.Library.UI.NodeEditor
         /// <summary>
         /// Occurs when Node is constructed.
         /// </summary>
-        protected virtual void OnCreate() { }
+        protected void OnCreate()
+        {
+            LetGetOptions = true;
+            Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, (byte)0);
+        }
         /// <summary>
         /// Draw the entire Node.
         /// </summary>
