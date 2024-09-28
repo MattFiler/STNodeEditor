@@ -379,8 +379,8 @@ namespace ST.Library.UI.NodeEditor
 #if DEBUG
             if (status != ConnectionStatus.Connected)
             {
-                //MessageBox.Show("FAILED to connect option! Please breakpoint STNodeOption.");
-                //Console.WriteLine("Failed to connect option: " + status);
+                Console.WriteLine("Failed to connect option: " + status);
+                MessageBox.Show("FAILED to connect option! Please breakpoint STNodeOption.");
             }
 #endif
             return status;

@@ -905,6 +905,12 @@ namespace ST.Library.UI.NodeEditor
             if (bRedraw) this.Invalidate();
         }
 
+        public STNode GetHoveredNode()
+        {
+            NodeFindInfo nfi = this.FindNodeFromPoint(m_pt_in_canvas);
+            return nfi.Node;
+        }
+
         protected override void OnMouseUp(MouseEventArgs e) {
             base.OnMouseUp(e);
             var nfi = this.FindNodeFromPoint(m_pt_in_canvas);
