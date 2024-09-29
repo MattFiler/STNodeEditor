@@ -580,6 +580,19 @@ namespace ST.Library.UI.NodeEditor
             return this.OutputOptions.Add(option, typeof(void), false);
         }
 
+        public void RemoveInputOption(ShortGuid option)
+        {
+            var inputs = this.InputOptions.ToArray().ToList().FindAll(o => o.ShortGUID == option);
+            foreach (var input in inputs)
+                this.InputOptions.Remove(input);
+        }
+        public void RemoveOutputOption(ShortGuid option)
+        {
+            var inputs = this.OutputOptions.ToArray().ToList().FindAll(o => o.ShortGUID == option);
+            foreach (var input in inputs)
+                this.OutputOptions.Remove(input);
+        }
+
         //private int m_nItemHeight = 30;
         protected StringFormat m_sf;
         /// <summary>
