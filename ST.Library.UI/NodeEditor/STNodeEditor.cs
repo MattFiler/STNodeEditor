@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -440,6 +440,7 @@ namespace ST.Library.UI.NodeEditor
         /// The current real-time position of the mouse in the canvas.
         /// </summary>
         protected PointF m_pt_in_canvas;
+        public PointF MousePositionInCanvas => m_pt_in_canvas;
         /// <summary>
         /// The position on the control when the mouse is clicked.
         /// </summary>
