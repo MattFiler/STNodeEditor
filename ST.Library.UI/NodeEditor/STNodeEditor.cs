@@ -1566,16 +1566,28 @@ namespace ST.Library.UI.NodeEditor
             int nY = (int)((pt.Y - m_pt_down_in_control.Y) / this._CanvasScale);
             lock (m_hs_node_selected) {
                 foreach (STNode v in m_hs_node_selected) {
+                    if (!v.IsSelected)
+                        continue;
                     v.Left = m_dic_pt_selected[v].X + nX;
                     v.Top = m_dic_pt_selected[v].Y + nY;
                 }
                 if (this._ShowMagnet) {
-                    MagnetInfo mi = this.CheckMagnet(this._ActiveNode);
+                    MagnetInfo mi = this.CheckMagnet(this._ActiveNode); //magnet is what we should hijack to highlight related nodes
                     if (mi.XMatched) {
-                        foreach (STNode v in m_hs_node_selected) v.Left -= mi.OffsetX;
+                        foreach (STNode v in m_hs_node_selected)
+                        {
+                            if (!v.IsSelected)
+                                continue;
+                            v.Left -= mi.OffsetX;
+                        }
                     }
                     if (mi.YMatched) {
-                        foreach (STNode v in m_hs_node_selected) v.Top -= mi.OffsetY;
+                        foreach (STNode v in m_hs_node_selected)
+                        {
+                            if (!v.IsSelected)
+                                continue;
+                            v.Top -= mi.OffsetY;
+                        }
                     }
                 }
             }
@@ -2289,6 +2301,17 @@ namespace ST.Library.UI.NodeEditor
             bool b = node.IsSelected;
             node.IsSelected = false;
             lock (m_hs_node_selected) return m_hs_node_selected.Remove(node) || b;
+        }
+        /// <summary>
+        /// Clear all selected nodes.
+        /// </summary>
+        public void RemoveAllSelectedNodes()
+        {
+            List<STNode> nodes = new List<STNode>();
+            foreach (STNode n in m_hs_node_selected)
+                nodes.Add(n);
+            foreach (STNode n in nodes)
+                RemoveSelectedNode(n);
         }
         /// <summary>
         /// Add the default data type color to the editor
