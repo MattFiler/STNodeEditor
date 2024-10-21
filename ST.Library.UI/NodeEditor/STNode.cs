@@ -730,7 +730,7 @@ namespace ST.Library.UI.NodeEditor
                 }
                 else
                 {
-                    RoundedCornerUtils.FillRoundedRectangleTop(g, brush, this.TitleRectangle, Owner.RoundedCornerRadius, !RenderingOptions);
+                    RoundedCornerUtils.FillRoundedRectangleTop(g, brush, this.TitleRectangle, Owner.RoundedCornerRadius, InputOptionsCount + OutputOptionsCount == 0 || !RenderingOptions);
                 }
             }
             if (this._LockOption) {
